@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import personService from './services/persons'
 
 const Filter = ({
   filterName,
@@ -49,26 +50,34 @@ const PersonForm = ({
   )
 }
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, onClick }) => {
   return (
     <div>
       {persons.map(person => (
-        <p key={person.name}>
+        <><p key={person.name}>
           {person.name} {person.number}
-        </p>
+        </p><button onClick={() => onClick(person.id)}>delete</button></>
       ))}
     </div>
   )
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '1234' }
-  ])
+  const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+
+  const deletePerson = (id) => {
+    if (window.confirm('Are you sure you want to delete this contact?')) {
+      personService.deletePerson(id)
+        .then(() => {
+          //create a new arr where the deleted person is filtered out and set it as the new state
+          setPersons(persons.filter(p => p.id !== id))
+        })
+    }
+  }
 
   const addContact = (event) => {
     event.preventDefault()
@@ -83,14 +92,24 @@ const App = () => {
       return
     }
 
-    setPersons(persons.concat({
+    const personObject = {
       name: newName,
       number: newNumber
-    }))
+    }
 
-    setNewName('')
-    setNewNumber('')
+    personService.create(personObject)
+      .then(response => {
+        setPersons(persons.concat(response))
+        setNewName('')
+        setNewNumber('')
+      })
   }
+
+  useEffect(() => {
+    personService.getall().then(data => {
+      setPersons(data)
+    })
+  }, [])
 
   const handleFind = (event) => {
     event.preventDefault()
@@ -114,15 +133,6 @@ const App = () => {
 
     setFilterName('')
   }
-
-  const personsToShow =
-    filterName === ''
-      ? persons
-      : persons.filter(person =>
-          person.name
-            .toLowerCase()
-            .includes(filterName.toLowerCase())
-        )
 
   return (
     <div>
@@ -152,7 +162,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={personsToShow} />
+      <Persons persons={persons} onClick={deletePerson}/>
     </div>
   )
 }
