@@ -1,21 +1,26 @@
 {
-  "name": "phonebook",
+  "name": "phonebook-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple REST API with NodeJS and Express",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
-  "keywords": [],
-  "author": "",
+  "author": "Angelo Finassi <finassiangelo@gmail.com>",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1",
-    "morgan": "^1.10.1"
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.7",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "eslint": "^6.8.0",
+    "nodemon": "^2.0.2"
   }
 }
